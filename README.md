@@ -1,11 +1,13 @@
 # UnityPlayerLoopUtility
 Small easy-to-use utility for hooking delegates into Unity PlayerLoop updates.
 
-Import Unity Package Manager using this repo's git url: https://github.com/NPTP/UnityPlayerLoopUtility.git
+Import this into your project with the Unity Package Manager using the repo's git url: https://github.com/NPTP/UnityPlayerLoopUtility.git
 
 Implement any of the interfaces that implement IPlayerLoopUser to hook into PlayerLoop.
 Call the subscribe method to hook in, unsubscribe to unhook.
 Fill out the virtual methods as desired.
+Note this can be used in MonoBehaviours as well, if desired.
+
 See the Example.cs script for usage:
 
 ```
