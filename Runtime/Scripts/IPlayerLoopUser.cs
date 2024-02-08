@@ -3,6 +3,9 @@
 // -------------------------------------------
 namespace NPTP.PlayerLoopUtility
 {
+    /// <summary>
+    /// Implementing this base interface has no effect. Use the inheritors below.
+    /// </summary>
     public interface IPlayerLoopUser { }
     
     /// <summary>

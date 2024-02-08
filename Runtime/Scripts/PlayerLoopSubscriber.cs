@@ -9,7 +9,14 @@ namespace NPTP.PlayerLoopUtility
 {
     public static class PlayerLoopSubscriber
     {
+        /// <summary>
+        /// Subscribe the PlayerLoopUser to the desired part of the PlayerLoop. Double-subscriptions will be silently prevented.
+        /// </summary>
         public static void Subscribe(IPlayerLoopUser subscriber) => ChangeSubscription(subscriber, Subscription.Add);
+        
+        /// <summary>
+        /// Unsubscribe the PlayerLoopUser from the PlayerLoop.
+        /// </summary>
         public static void Unsubscribe(IPlayerLoopUser subscriber) => ChangeSubscription(subscriber, Subscription.Remove);
 
         private static void ChangeSubscription(IPlayerLoopUser subscriber, Subscription subscription)
