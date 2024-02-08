@@ -9,7 +9,11 @@ Fill out the virtual methods as desired.
 See the Example.cs script for usage:
 
 ```
-public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
+using UnityEngine;
+
+namespace NPTP.PlayerLoopUtility
+{
+    public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
     {
         private float updateTimeElapsed;
         private float fixedUpdateTimeElapsed;
@@ -44,6 +48,7 @@ public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
             PlayerLoopSubscriber.Unsubscribe(this);
         }
     }
+}
 ```
 
 This package is under the MIT License.
