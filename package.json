@@ -1,0 +1,18 @@
+{
+    "name": "com.nptp.unityplayerlooputility",
+    "version": "1.0.0",
+    "displayName": "Unity PlayerLoop Utility",
+    "unity": "2019.4",
+    "description": "Small easy-to-use utility for hooking delegates into Unity PlayerLoop updates",
+    "homepage": "https://github.com/NPTP/UnityPlayerLoopUtility.git",
+    "repository": {
+      "type": "git",
+      "url": "git+ssh://github.com/NPTP/UnityPlayerLoopUtility.git"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Nick Perrin",
+        "email": "nickptperrin@outlook.com",
+        "url": "www.nickperrin.com"
+    }
+}
