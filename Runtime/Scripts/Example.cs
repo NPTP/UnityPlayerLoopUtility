@@ -1,15 +1,8 @@
-# UnityPlayerLoopUtility
-Small easy-to-use utility for hooking delegates into Unity PlayerLoop updates.
+using UnityEngine;
 
-Import Unity Package Manager using this repo's git url: https://github.com/NPTP/UnityPlayerLoopUtility.git
-
-Implement any of the interfaces that implement IPlayerLoopUser to hook into PlayerLoop.
-Call the subscribe method to hook in, unsubscribe to unhook.
-Fill out the virtual methods as desired.
-See the Example.cs script for usage:
-
-```
-public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
+namespace NPTP.PlayerLoopUtility
+{
+    public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
     {
         private float updateTimeElapsed;
         private float fixedUpdateTimeElapsed;
@@ -44,6 +37,4 @@ public class Example : IPlayerLoopUpdater, IPlayerLoopFixedUpdater
             PlayerLoopSubscriber.Unsubscribe(this);
         }
     }
-```
-
-This package is under the MIT License.
+}

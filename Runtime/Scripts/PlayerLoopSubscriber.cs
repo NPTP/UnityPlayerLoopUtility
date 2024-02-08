@@ -12,49 +12,45 @@ namespace NPTP.PlayerLoopUtility
         private static void ChangeSubscription(IPlayerLoopUser subscriber, Subscription subscription)
         {
             PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
-            
-            switch (subscriber)
+
+            if (subscriber is IPlayerLoopEarlyUpdater earlyUpdater)
             {
-                case IPlayerLoopEarlyUpdater earlyUpdater:
-                {
-                    int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(EarlyUpdate));
-                    playerLoop.subSystemList[subsystemIndex].updateDelegate -= earlyUpdater.PlayerLoopEarlyUpdate;
-                    if (subscription is Subscription.Add)
-                        playerLoop.subSystemList[subsystemIndex].updateDelegate += earlyUpdater.PlayerLoopEarlyUpdate;
-                    break;
-                }
-                case IPlayerLoopUpdater updater:
-                {
-                    int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(Update));
-                    playerLoop.subSystemList[subsystemIndex].updateDelegate -= updater.PlayerLoopUpdate;
-                    if (subscription is Subscription.Add)
-                        playerLoop.subSystemList[subsystemIndex].updateDelegate += updater.PlayerLoopUpdate;
-                    break;
-                }
-                case IPlayerLoopPreLateUpdater preLateUpdater:
-                {
-                    int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(PreLateUpdate));
-                    playerLoop.subSystemList[subsystemIndex].updateDelegate -= preLateUpdater.PlayerLoopPreLateUpdate;
-                    if (subscription is Subscription.Add)
-                        playerLoop.subSystemList[subsystemIndex].updateDelegate += preLateUpdater.PlayerLoopPreLateUpdate;
-                    break;
-                }
-                case IPlayerLoopPostLateUpdater postLateUpdater:
-                {
-                    int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(PostLateUpdate));
-                    playerLoop.subSystemList[subsystemIndex].updateDelegate -= postLateUpdater.PlayerLoopPostLateUpdate;
-                    if (subscription is Subscription.Add)
-                        playerLoop.subSystemList[subsystemIndex].updateDelegate += postLateUpdater.PlayerLoopPostLateUpdate;
-                    break;
-                }
-                case IPlayerLoopFixedUpdater fixedUpdater:
-                {
-                    int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(FixedUpdate));
-                    playerLoop.subSystemList[subsystemIndex].updateDelegate -= fixedUpdater.PlayerLoopFixedUpdate;
-                    if (subscription is Subscription.Add)
-                        playerLoop.subSystemList[subsystemIndex].updateDelegate += fixedUpdater.PlayerLoopFixedUpdate;
-                    break;
-                }
+                int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(EarlyUpdate));
+                playerLoop.subSystemList[subsystemIndex].updateDelegate -= earlyUpdater.PlayerLoopEarlyUpdate;
+                if (subscription is Subscription.Add)
+                    playerLoop.subSystemList[subsystemIndex].updateDelegate += earlyUpdater.PlayerLoopEarlyUpdate;
+            }
+            
+            if (subscriber is IPlayerLoopUpdater updater)
+            {
+                int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(Update));
+                playerLoop.subSystemList[subsystemIndex].updateDelegate -= updater.PlayerLoopUpdate;
+                if (subscription is Subscription.Add)
+                    playerLoop.subSystemList[subsystemIndex].updateDelegate += updater.PlayerLoopUpdate;
+            }
+            
+            if (subscriber is IPlayerLoopPreLateUpdater preLateUpdater)
+            {
+                int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(PreLateUpdate));
+                playerLoop.subSystemList[subsystemIndex].updateDelegate -= preLateUpdater.PlayerLoopPreLateUpdate;
+                if (subscription is Subscription.Add)
+                    playerLoop.subSystemList[subsystemIndex].updateDelegate += preLateUpdater.PlayerLoopPreLateUpdate;
+            }
+            
+            if (subscriber is IPlayerLoopPostLateUpdater postLateUpdater)
+            {
+                int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(PostLateUpdate));
+                playerLoop.subSystemList[subsystemIndex].updateDelegate -= postLateUpdater.PlayerLoopPostLateUpdate;
+                if (subscription is Subscription.Add)
+                    playerLoop.subSystemList[subsystemIndex].updateDelegate += postLateUpdater.PlayerLoopPostLateUpdate;
+            }
+            
+            if (subscriber is IPlayerLoopFixedUpdater fixedUpdater)
+            {
+                int subsystemIndex = GetIndexOfSubsystem(playerLoop, typeof(FixedUpdate));
+                playerLoop.subSystemList[subsystemIndex].updateDelegate -= fixedUpdater.PlayerLoopFixedUpdate;
+                if (subscription is Subscription.Add)
+                    playerLoop.subSystemList[subsystemIndex].updateDelegate += fixedUpdater.PlayerLoopFixedUpdate;
             }
 
             PlayerLoop.SetPlayerLoop(playerLoop);
