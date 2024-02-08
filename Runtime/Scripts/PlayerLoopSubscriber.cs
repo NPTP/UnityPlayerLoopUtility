@@ -1,3 +1,6 @@
+// -------------------------------------------
+// Nick Perrin 2024 - https://github.com/NPTP/
+// -------------------------------------------
 using System;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
