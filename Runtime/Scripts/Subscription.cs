@@ -1,7 +1,7 @@
 ﻿// -------------------------------------------
 // Nick Perrin 2024 - https://github.com/NPTP/
 // -------------------------------------------
-namespace NPTP.PlayerLoopUtility
+namespace NPTP.PlayerLoopUtilities
 {
     public enum Subscription
     {
