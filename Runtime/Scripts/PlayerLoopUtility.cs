@@ -51,10 +51,14 @@ namespace NPTP.PlayerLoopUtilities
         /// </summary>
         public static void UnsubscribeAll()
         {
-            foreach (PlayerLoopSubscriber playerLoopSubscriber in playerLoopSubscribersSet)
+            PlayerLoopSubscriber[] subscribersCopyArray = new PlayerLoopSubscriber[playerLoopSubscribersSet.Count];
+            playerLoopSubscribersSet.CopyTo(subscribersCopyArray);
+            for (int i = 0; i < subscribersCopyArray.Length; i++)
             {
+                PlayerLoopSubscriber playerLoopSubscriber = subscribersCopyArray[i];
                 ChangeSubscription(playerLoopSubscriber.UpdateFunction, playerLoopSubscriber.UpdateType, Subscription.Remove);
             }
+            playerLoopSubscribersSet.Clear();
         }
  
         private static void ChangeSubscription(UpdateFunction updateFunction, Type updateType, Subscription subscription)
