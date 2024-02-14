@@ -92,7 +92,7 @@ namespace NPTP.PlayerLoopUtilities
         
 #if UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void PlayStateNotifier()
+        private static void PlayModeStateNotifier()
         {
             EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
             EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
