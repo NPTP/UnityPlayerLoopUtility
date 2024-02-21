@@ -3,78 +3,93 @@
 // -------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
-using Utilities.PlayerLoop;
 using UpdateFunction = UnityEngine.LowLevel.PlayerLoopSystem.UpdateFunction;
 
 namespace NPTP.PlayerLoopUtilities
 {
     public static class PlayerLoopUtility
     {
-        private static readonly HashSet<PlayerLoopSubscriber> playerLoopSubscribersSet = new();
+        private static readonly HashSet<PlayerLoopSetup> subscribedSetups = new();
+        private static PlayerLoopSetup[] SubscribedSetupsArray => subscribedSetups.ToArray();
 
-        public static event UpdateFunction OnPlayerLoopEarlyUpdate
+        private static readonly PlayerLoopSetup<EarlyUpdate> earlyUpdateSetup = new();
+        private static readonly PlayerLoopSetup<Update> updateSetup = new();
+        private static readonly PlayerLoopSetup<PreLateUpdate> preLateUpdateSetup = new();
+        private static readonly PlayerLoopSetup<PostLateUpdate> postLateUpdateSetup = new();
+        private static readonly PlayerLoopSetup<FixedUpdate> fixedUpdateSetup = new();
+        
+        public static event Action OnPlayerLoopEarlyUpdate
         {
-            add => ChangeSubscription(value, typeof(EarlyUpdate), Subscription.Add);
-            remove => ChangeSubscription(value, typeof(EarlyUpdate), Subscription.Remove);
+            add => AddToSubscribers(value, earlyUpdateSetup);
+            remove => RemoveFromSubscribers(value, earlyUpdateSetup);
         }
 
-        public static event UpdateFunction OnPlayerLoopUpdate
+        public static event Action OnPlayerLoopUpdate
         {
-            add => ChangeSubscription(value, typeof(Update), Subscription.Add);
-            remove => ChangeSubscription(value, typeof(Update), Subscription.Remove);
+            add => AddToSubscribers(value, updateSetup);
+            remove => RemoveFromSubscribers(value, updateSetup);
         }
 
-        public static event UpdateFunction OnPlayerLoopPreLateUpdate
+        public static event Action OnPlayerLoopPreLateUpdate
         {
-            add => ChangeSubscription(value, typeof(PreLateUpdate), Subscription.Add);
-            remove => ChangeSubscription(value, typeof(PreLateUpdate), Subscription.Remove);
+            add => AddToSubscribers(value, preLateUpdateSetup);
+            remove => RemoveFromSubscribers(value, preLateUpdateSetup);
         }
 
-        public static event UpdateFunction OnPlayerLoopPostLateUpdate
+        public static event Action OnPlayerLoopPostLateUpdate
         {
-            add => ChangeSubscription(value, typeof(PostLateUpdate), Subscription.Add);
-            remove => ChangeSubscription(value, typeof(PostLateUpdate), Subscription.Remove);
+            add => AddToSubscribers(value, postLateUpdateSetup);
+            remove => RemoveFromSubscribers(value, postLateUpdateSetup);
         }
 
-        public static event UpdateFunction OnPlayerLoopFixedUpdate
+        public static event Action OnPlayerLoopFixedUpdate
         {
-            add => ChangeSubscription(value, typeof(FixedUpdate), Subscription.Add);
-            remove => ChangeSubscription(value, typeof(FixedUpdate), Subscription.Remove);
+            add => AddToSubscribers(value, fixedUpdateSetup);
+            remove => RemoveFromSubscribers(value, fixedUpdateSetup);
         }
         
-        /// <summary>
-        /// Detaches ALL custom delegates attached to the PlayerLoop system.
-        /// </summary>
-        public static void UnsubscribeAll()
+        private static void AddToSubscribers(Action subscriber, PlayerLoopSetup playerLoopSetup)
         {
-            PlayerLoopSubscriber[] subscribersCopyArray = new PlayerLoopSubscriber[playerLoopSubscribersSet.Count];
-            playerLoopSubscribersSet.CopyTo(subscribersCopyArray);
-            for (int i = 0; i < subscribersCopyArray.Length; i++)
+            if (playerLoopSetup.SubscribedDelegates.Count == 0)
             {
-                PlayerLoopSubscriber playerLoopSubscriber = subscribersCopyArray[i];
-                ChangeSubscription(playerLoopSubscriber.UpdateFunction, playerLoopSubscriber.UpdateType, Subscription.Remove);
+                ChangeInternalSubscription(playerLoopSetup, Subscription.Add);
             }
-            playerLoopSubscribersSet.Clear();
+
+            playerLoopSetup.OnUpdate += subscriber;
+            playerLoopSetup.SubscribedDelegates.Add(subscriber);
         }
- 
-        private static void ChangeSubscription(UpdateFunction updateFunction, Type updateType, Subscription subscription)
+
+        private static void RemoveFromSubscribers(Action subscriber, PlayerLoopSetup playerLoopSetup)
+        {
+            playerLoopSetup.OnUpdate -= subscriber;
+            playerLoopSetup.SubscribedDelegates.Remove(subscriber);
+
+            if (playerLoopSetup.SubscribedDelegates.Count == 0)
+            {
+                ChangeInternalSubscription(playerLoopSetup, Subscription.Remove);
+            }
+        }
+
+        private static void ChangeInternalSubscription(PlayerLoopSetup playerLoopSetup, Subscription subscription)
         {
             PlayerLoopSystem playerLoop = UnityEngine.LowLevel.PlayerLoop.GetCurrentPlayerLoop();
 
-            int subsystemIndex = GetIndexOfSubsystem(playerLoop, updateType);
+            UpdateFunction updateFunction = playerLoopSetup.UpdateFunction;
+
+            int subsystemIndex = GetIndexOfSubsystem(playerLoop, playerLoopSetup.UpdateType);
             playerLoop.subSystemList[subsystemIndex].updateDelegate -= updateFunction; // Prevent multi-subscriptions
             if (subscription is Subscription.Add)
                 playerLoop.subSystemList[subsystemIndex].updateDelegate += updateFunction;
             
-            PlayerLoopSubscriber playerLoopSubscriber = new(updateFunction, updateType);
             if (subscription is Subscription.Remove)
-                playerLoopSubscribersSet.Remove(playerLoopSubscriber);
+                subscribedSetups.Remove(playerLoopSetup);
             else if (subscription is Subscription.Add)
-                playerLoopSubscribersSet.Add(playerLoopSubscriber);
+                subscribedSetups.Add(playerLoopSetup);
             
             UnityEngine.LowLevel.PlayerLoop.SetPlayerLoop(playerLoop);
         }
@@ -94,6 +109,15 @@ namespace NPTP.PlayerLoopUtilities
             return i;
         }
         
+        private static void UnsubscribeAllInternalDelegates()
+        {
+            PlayerLoopSetup[] setups = SubscribedSetupsArray;
+            for (int i = 0; i < setups.Length; i++)
+            {
+                ChangeInternalSubscription(setups[i], Subscription.Remove);
+            }
+        }
+        
 #if UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void PlayModeStateNotifier()
@@ -107,7 +131,7 @@ namespace NPTP.PlayerLoopUtilities
             if (playModeStateChange is PlayModeStateChange.ExitingPlayMode)
             {
                 EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
-                UnsubscribeAll();
+                UnsubscribeAllInternalDelegates();
             }
         }
 #endif
