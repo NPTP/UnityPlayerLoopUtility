@@ -48,12 +48,9 @@ namespace NPTP.PlayerLoopUtilities
             // It's highly recommended to tear down any usage when you're done.
             PlayerLoopUtility.OnPlayerLoopUpdate -= PlayerLoopUpdate;
             PlayerLoopUtility.OnPlayerLoopFixedUpdate -= PlayerLoopFixedUpdate;
-            
-            // If you want to stop all PlayerLoop custom updates across your whole project, you can also call:
-            PlayerLoopUtility.UnsubscribeAll();
-            
-            // NOTE: In the editor, the Player Loop Utility will automatically make the call to UnsubscribeAll
-            // before exiting play mode as a safety precaution, whether or not you call it.
+
+            // NOTE: In the editor, the Player Loop Utility will automatically stop any internal delegates attached to
+            // the player loop before exiting play mode as a safety precaution.
             // This is done to prevent a side effect where some PlayerLoop functionality can continue into edit mode.
         }
     }
