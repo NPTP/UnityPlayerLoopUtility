@@ -15,7 +15,6 @@ namespace NPTP.PlayerLoopUtilities
     public static class PlayerLoopUtility
     {
         private static readonly HashSet<PlayerLoopSetup> subscribedSetups = new();
-        private static PlayerLoopSetup[] SubscribedSetupsArray => subscribedSetups.ToArray();
 
         private static readonly PlayerLoopSetup<EarlyUpdate> earlyUpdateSetup = new();
         private static readonly PlayerLoopSetup<Update> updateSetup = new();
@@ -111,7 +110,7 @@ namespace NPTP.PlayerLoopUtilities
         
         private static void UnsubscribeAllInternalDelegates()
         {
-            PlayerLoopSetup[] setups = SubscribedSetupsArray;
+            PlayerLoopSetup[] setups = subscribedSetups.ToArray();
             for (int i = 0; i < setups.Length; i++)
             {
                 ChangeInternalSubscription(setups[i], Subscription.Remove);
