@@ -1,4 +1,7 @@
-﻿using System;
+﻿// -------------------------------------------
+// Nick Perrin 2024 - https://github.com/NPTP/
+// -------------------------------------------
+using System;
 using System.Collections.Generic;
 
 namespace NPTP.PlayerLoopUtilities
@@ -7,6 +10,7 @@ namespace NPTP.PlayerLoopUtilities
     {
         public event Action OnUpdate;
         public HashSet<Action> SubscribedDelegates { get; } = new HashSet<Action>();
+        public bool HasSubscribers => SubscribedDelegates.Count > 0;
         public void UpdateFunction() => OnUpdate?.Invoke();
         
         public abstract Type UpdateType { get; }
