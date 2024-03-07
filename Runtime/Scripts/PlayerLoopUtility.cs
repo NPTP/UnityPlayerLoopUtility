@@ -15,47 +15,48 @@ namespace NPTP.PlayerLoopUtilities
     public static class PlayerLoopUtility
     {
         private static readonly HashSet<PlayerLoopSetup> subscribedSetups = new();
-
-        private static readonly PlayerLoopSetup<EarlyUpdate> earlyUpdateSetup = new();
-        private static readonly PlayerLoopSetup<Update> updateSetup = new();
-        private static readonly PlayerLoopSetup<PreLateUpdate> preLateUpdateSetup = new();
-        private static readonly PlayerLoopSetup<PostLateUpdate> postLateUpdateSetup = new();
-        private static readonly PlayerLoopSetup<FixedUpdate> fixedUpdateSetup = new();
+        
+        private static PlayerLoopSetup<EarlyUpdate> earlyUpdateSetup;
+        private static PlayerLoopSetup<Update> updateSetup;
+        private static PlayerLoopSetup<PreLateUpdate> preLateUpdateSetup;
+        private static PlayerLoopSetup<PostLateUpdate> postLateUpdateSetup;
+        private static PlayerLoopSetup<FixedUpdate> fixedUpdateSetup;
         
         public static event Action OnPlayerLoopEarlyUpdate
         {
-            add => AddToSubscribers(value, earlyUpdateSetup);
-            remove => RemoveFromSubscribers(value, earlyUpdateSetup);
+            add => AddToSubscribers(value, ref earlyUpdateSetup);
+            remove => RemoveFromSubscribers(value, ref earlyUpdateSetup);
         }
 
         public static event Action OnPlayerLoopUpdate
         {
-            add => AddToSubscribers(value, updateSetup);
-            remove => RemoveFromSubscribers(value, updateSetup);
+            add => AddToSubscribers(value, ref updateSetup);
+            remove => RemoveFromSubscribers(value, ref updateSetup);
         }
 
         public static event Action OnPlayerLoopPreLateUpdate
         {
-            add => AddToSubscribers(value, preLateUpdateSetup);
-            remove => RemoveFromSubscribers(value, preLateUpdateSetup);
+            add => AddToSubscribers(value, ref preLateUpdateSetup);
+            remove => RemoveFromSubscribers(value, ref preLateUpdateSetup);
         }
 
         public static event Action OnPlayerLoopPostLateUpdate
         {
-            add => AddToSubscribers(value, postLateUpdateSetup);
-            remove => RemoveFromSubscribers(value, postLateUpdateSetup);
+            add => AddToSubscribers(value, ref postLateUpdateSetup);
+            remove => RemoveFromSubscribers(value, ref postLateUpdateSetup);
         }
 
         public static event Action OnPlayerLoopFixedUpdate
         {
-            add => AddToSubscribers(value, fixedUpdateSetup);
-            remove => RemoveFromSubscribers(value, fixedUpdateSetup);
+            add => AddToSubscribers(value, ref fixedUpdateSetup);
+            remove => RemoveFromSubscribers(value, ref fixedUpdateSetup);
         }
         
-        private static void AddToSubscribers(Action subscriber, PlayerLoopSetup playerLoopSetup)
+        private static void AddToSubscribers<T>(Action subscriber, ref T playerLoopSetup) where T : PlayerLoopSetup, new()
         {
-            if (playerLoopSetup.SubscribedDelegates.Count == 0)
+            if (playerLoopSetup == null)
             {
+                playerLoopSetup = new T();
                 ChangeInternalSubscription(playerLoopSetup, Subscription.Add);
             }
 
@@ -63,14 +64,15 @@ namespace NPTP.PlayerLoopUtilities
             playerLoopSetup.SubscribedDelegates.Add(subscriber);
         }
 
-        private static void RemoveFromSubscribers(Action subscriber, PlayerLoopSetup playerLoopSetup)
+        private static void RemoveFromSubscribers<T>(Action subscriber, ref T playerLoopSetup) where T : PlayerLoopSetup
         {
             playerLoopSetup.OnUpdate -= subscriber;
             playerLoopSetup.SubscribedDelegates.Remove(subscriber);
 
-            if (playerLoopSetup.SubscribedDelegates.Count == 0)
+            if (!playerLoopSetup.HasSubscribers)
             {
                 ChangeInternalSubscription(playerLoopSetup, Subscription.Remove);
+                playerLoopSetup = null;
             }
         }
 
