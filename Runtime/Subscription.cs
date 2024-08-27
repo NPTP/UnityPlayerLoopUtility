@@ -1,9 +1,9 @@
 ﻿// -------------------------------------------
 // Nick Perrin 2024 - https://github.com/NPTP/
 // -------------------------------------------
-namespace NPTP.PlayerLoopUtilities
+namespace NPTP.PlayerLoopUtility
 {
-    public enum Subscription
+    internal enum Subscription
     {
         Add,
         Remove

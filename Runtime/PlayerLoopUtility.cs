@@ -10,7 +10,7 @@ using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 using UpdateFunction = UnityEngine.LowLevel.PlayerLoopSystem.UpdateFunction;
 
-namespace NPTP.PlayerLoopUtilities
+namespace NPTP.PlayerLoopUtility
 {
     public static class PlayerLoopUtility
     {

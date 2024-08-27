@@ -1,6 +1,6 @@
 {
-    "name": "NPTP.PlayerLoopUtilities",
-    "rootNamespace": "NPTP.PlayerLoopUtilities",
+    "name": "NPTP.PlayerLoopUtility",
+    "rootNamespace": "NPTP.PlayerLoopUtility",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -5,20 +5,29 @@ Import this into your project with the Unity Package Manager using the repo's gi
 
 Subscribe to the static events of PlayerLoopUtility to use the desired update type from any class: static, non-Unity object, MonoBehaviour etc.
 
-See the Example.cs script for usage:
+Example usage:
 
 ```
 using UnityEngine;
 
 namespace NPTP.PlayerLoopUtilities
 {
-    /// <summary>
-    /// Instantiate this class somewhere in your code to see things working and the log messages appear in your console.
-    /// </summary>
     public class Example
     {
         private float updateTimeElapsed;
         private float fixedUpdateTimeElapsed;
+        
+        // There are two ways to use this utility: directly un/subscribing methods to different parts of the player loop,
+        // or applying attributes to static methods to have them inserted into the desired part of the player loop at runtime.
+        // This is how to use it with a static method:
+        
+        [PlayerLoopUpdate(typeof(UpdateType.FixedUpdate))]
+        private static void StaticFixedUpdater()
+        {
+            Debug.Log("This will run on every fixed update once the first scene has finished loading.");
+        }
+        
+        // And below is how to use it for an instantiable class:
         
         public Example()
         {
@@ -48,11 +57,12 @@ namespace NPTP.PlayerLoopUtilities
             // It's highly recommended to tear down any usage when you're done.
             PlayerLoopUtility.OnPlayerLoopUpdate -= PlayerLoopUpdate;
             PlayerLoopUtility.OnPlayerLoopFixedUpdate -= PlayerLoopFixedUpdate;
-
-            // NOTE: In the editor, the Player Loop Utility will automatically stop any internal delegates attached to
-            // the player loop before exiting play mode as a safety precaution.
-            // This is done to prevent a side effect where some PlayerLoop functionality can continue into edit mode.
         }
+        
+        // NOTE: In the editor, the Player Loop Utility will automatically stop any internal delegates attached to
+        // the player loop before exiting play mode as a safety precaution. (This includes any static methods
+        // inserted into the player loop using the PlayerLoopUpdate attribute.)
+        // This is done to prevent a side effect where some PlayerLoop functionality can continue into edit mode.
     }
 }
 ```
