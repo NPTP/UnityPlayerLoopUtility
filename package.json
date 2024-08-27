@@ -1,6 +1,6 @@
 {
     "name": "com.nptp.unityplayerlooputility",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "displayName": "PlayerLoop Utility",
     "unity": "2019.4",
     "description": "Small easy-to-use utility for hooking delegates into Unity PlayerLoop updates.",
