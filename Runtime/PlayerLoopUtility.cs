@@ -54,6 +54,11 @@ namespace NPTP.PlayerLoopUtility
         
         private static void AddToSubscribers<T>(Action subscriber, ref T playerLoopSetup) where T : PlayerLoopSetup, new()
         {
+            if (subscriber == null)
+            {
+                return;
+            }
+            
             if (playerLoopSetup == null)
             {
                 playerLoopSetup = new T();
@@ -66,6 +71,11 @@ namespace NPTP.PlayerLoopUtility
 
         private static void RemoveFromSubscribers<T>(Action subscriber, ref T playerLoopSetup) where T : PlayerLoopSetup
         {
+            if (subscriber == null)
+            {
+                return;
+            }
+            
             playerLoopSetup.OnUpdate -= subscriber;
             playerLoopSetup.SubscribedDelegates.Remove(subscriber);
 
